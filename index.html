@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tickets</title>
+  <style>
+    .true {
+      color: darkgreen;
+      font-weight: bold;
+    }
+
+    .false {
+      color: darkred;
+      font-weight: bold;
+    }
+
+    .seat {
+      background: lightblue;
+      border: 1px solid black;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .seat:hover {
+      background: cornflowerblue;
+    }
+
+    .seat-unavailable {
+      background: red;
+      cursor: default;
+    }
+
+    .seat-unavailable:hover {
+      background: red;
+    }
+
+    .seat-selected {
+      background: green;
+      cursor: default;
+    }
+
+    .seat-selected:hover {
+      background: darkgreen;
+    }
+
+    #seatplan {
+      display: flex;
+      width: 110px;
+      flex-wrap: wrap;
+    }
+
+  </style>
+</head>
+<body>
+<h1>Tickets tickets tickets</h1>
+<h2>Ticket Count: <span id="ticketCount"></span></h2>
+<h2>Select a seat</h2>
+<div id="seatplan"></div>
+<button>Cancel</button><button>Purchase</button>
+<span id="purchaseConfirmed"></span>
+<h2>Admin Console</h2>
+<ul id="tickets"></ul>
+<script src="./vendor/firebase.js"></script>
+<script src="./config.js"></script>
+<script src="./index.js"></script>
+</body>
+</html>
