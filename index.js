@@ -1,4 +1,4 @@
-firebase.initializeApp(CONFIG);
+firebase.initializeApp(FIREBASE_CONFIG);
 
 // Get a reference to the database service
 const database = firebase.database();
