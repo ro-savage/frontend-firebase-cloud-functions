@@ -3,11 +3,37 @@ firebase.initializeApp(FIREBASE_CONFIG);
 // Get a reference to the database service
 const database = firebase.database();
 
-const event1listener = firebase.database().ref('/tickets/event1').on('value', function(snapshot) {
+const EVENT_ID = 'event2'
+
+const createTickets = (eventId, ticketStart, ticketStop ) => {
+
+  const tickets = {}
+
+  for (let i = ticketStart; i <= ticketStop; i++) {
+    tickets[i] = {
+      id: i,
+      available: true,
+      reserved: false,
+      purchased: false,
+    }
+  }
+
+  // console.log(tickets)
+
+  firebase.database().ref('tickets/' + eventId).set({
+    ticketCount: ticketStop,
+    tickets: tickets,
+  });
+}
+
+// createTickets('event2', 1, 650)
+
+const event1listener = firebase.database().ref(`/tickets/${EVENT_ID}`).on('value', function(snapshot) {
   const val = snapshot.val()
   document.querySelector('#ticketCount').textContent = getTicketCount(val.tickets)
   updateTickets(val.tickets)
   createSeats(val.tickets)
+  console.log(val.tickets)
 });
 
 const getTicketCount = (tickets) => {
@@ -61,7 +87,7 @@ const updateTicket = (ticket) => {
 }
 
 const reserveTicket = (ticketId) => {
-  fetch(`https://us-central1-functions-56eb1.cloudfunctions.net/reserveTicket?ticketid=${ticketId}`)
+  fetch(`https://us-central1-functions-56eb1.cloudfunctions.net/reserveTicket?ticketid=${ticketId}&eventid=${EVENT_ID}`)
     .then((res) => res.json())
     .then((json) => {
     if(!json || json.error) {
@@ -75,7 +101,7 @@ const reserveTicket = (ticketId) => {
 }
 
 const purchaseTicket = (ticketId) => {
-  fetch(`https://us-central1-functions-56eb1.cloudfunctions.net/purchaseTicket?ticketid=${ticketId}`)
+  fetch(`https://us-central1-functions-56eb1.cloudfunctions.net/purchaseTicket?ticketid=${ticketId}&eventid=${EVENT_ID}`)
     .then((res) => res.json())
     .then((json) => {
       if(!json || json.error) {
@@ -89,7 +115,7 @@ const purchaseTicket = (ticketId) => {
 }
 
 const resetTicket = (ticketId) => {
-  fetch(`https://us-central1-functions-56eb1.cloudfunctions.net/resetTicket?ticketid=${ticketId}`)
+  fetch(`https://us-central1-functions-56eb1.cloudfunctions.net/resetTicket?ticketid=${ticketId}&eventid=${EVENT_ID}`)
     .then((res) => res.json())
     .then((json) => {
       if(!json || json.error) {
@@ -104,20 +130,15 @@ const resetTicket = (ticketId) => {
 
 const createSeats = (tickets) => {
   tickets.forEach(ticket => {
-    console.log('looking for: ', document.querySelector(`#seatId${ticket.id}`))
     if (document.querySelector(`#seatId${ticket.id}`)) {
-      console.log('found', ticket.id)
       updateSeat(ticket)
     } else {
-      console.log('not found', ticket.id)
       createSeat(ticket)
     }
   })
 }
 
 const createSeat = (ticket) => {
-  console.log('createSeat' , ticket)
-
   const elSeatPlan = document.querySelector('#seatplan')
 
   const divSeat = document.createElement("div")
