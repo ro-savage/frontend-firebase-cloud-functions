@@ -5,7 +5,7 @@ const database = firebase.database();
 
 const EVENT_ID = 'event2'
 
-const createTickets = (eventId, ticketStart, ticketStop ) => {
+const createNewTickets = (eventId, ticketStart, ticketStop ) => {
 
   const tickets = {}
 
@@ -26,12 +26,12 @@ const createTickets = (eventId, ticketStart, ticketStop ) => {
   });
 }
 
-// createTickets('event2', 1, 650)
+// createNewTickets('event2', 1, 650)
 
 const event1listener = firebase.database().ref(`/tickets/${EVENT_ID}`).on('value', function(snapshot) {
   const val = snapshot.val()
   document.querySelector('#ticketCount').textContent = getTicketCount(val.tickets)
-  updateTickets(val.tickets)
+  createTickets(val.tickets)
   createSeats(val.tickets)
   console.log(val.tickets)
 });
@@ -44,35 +44,60 @@ const getTicketCount = (tickets) => {
   return ticketCount
 }
 
-const updateTickets = (tickets) => {
+const createTickets = (tickets) => {
+  const p1 = performance.now()
   const elTickets = document.querySelector('#tickets')
-  elTickets.innerHTML = ''
   tickets.forEach(ticket => {
-    const li = document.createElement("li")
-
-    const btnReserve = document.createElement("button")
-    btnReserve.textContent = 'Reserve'
-    btnReserve.addEventListener('click', () => reserveTicket(ticket.id))
-
-    const btnPurchase = document.createElement("button")
-    btnPurchase.textContent = 'Purchase'
-    btnPurchase.addEventListener('click', () => purchaseTicket(ticket.id))
-
-    const btnReset = document.createElement("button")
-    btnReset.textContent = 'Reset'
-    btnReset.addEventListener('click', () => resetTicket(ticket.id))
-
-    const ticketUl = updateTicket(ticket)
-    li.textContent = `Ticket id: ${ticket.id}`
-    li.appendChild(btnReserve)
-    li.appendChild(btnPurchase)
-    li.appendChild(btnReset)
-    li.appendChild(ticketUl)
-    elTickets.appendChild(li)
+    if (elTickets.querySelector(`#ticket-${ticket.id}`)) {
+      updateTicket(ticket)
+    } else {
+      // Create tickete
+      elTickets.appendChild(createTicketListItem(ticket))
+    }
   })
+  const p2 = performance.now()
+  console.log('createTickets took', p2 - p1)
+}
+
+const createTicketListItem = (ticket) => {
+  const elTickets = document.querySelector('#tickets')
+
+  const li = document.createElement("li")
+  li.id = `ticket-${ticket.id}`
+
+  const btnReserve = document.createElement("button")
+  btnReserve.textContent = 'Reserve'
+  btnReserve.addEventListener('click', () => reserveTicket(ticket.id))
+
+  const btnPurchase = document.createElement("button")
+  btnPurchase.textContent = 'Purchase'
+  btnPurchase.addEventListener('click', () => purchaseTicket(ticket.id))
+
+  const btnReset = document.createElement("button")
+  btnReset.textContent = 'Reset'
+  btnReset.addEventListener('click', () => resetTicket(ticket.id))
+
+  const ticketUl = createTicketUl(ticket)
+  ticketUl.classList.add('ticketDetails')
+
+  li.textContent = `Ticket id: ${ticket.id}`
+  li.appendChild(btnReserve)
+  li.appendChild(btnPurchase)
+  li.appendChild(btnReset)
+  li.appendChild(ticketUl)
+  return li
 }
 
 const updateTicket = (ticket) => {
+  // console.log('Update ticket', ticket.id)
+  const elTickets = document.querySelector(`#ticket-${ticket.id}`)
+  elTickets.querySelector('.ticketDetails').remove()
+  const ticketUl = createTicketUl(ticket)
+  ticketUl.classList.add('ticketDetails')
+  elTickets.appendChild(ticketUl)
+}
+
+const createTicketUl = (ticket) => {
   const ul = document.createElement("ul")
   ul.id = ticket.id
   Object.keys(ticket).forEach(key => {
