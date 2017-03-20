@@ -31,7 +31,7 @@ const createNewTickets = (eventId, ticketStart, ticketStop ) => {
 const event1listener = firebase.database().ref(`/tickets/${EVENT_ID}`).on('value', function(snapshot) {
   const val = snapshot.val()
   document.querySelector('#ticketCount').textContent = getTicketCount(val.tickets)
-  createTickets(val.tickets)
+  // createTickets(val.tickets)
   createSeats(val.tickets)
   console.log(val.tickets)
 });

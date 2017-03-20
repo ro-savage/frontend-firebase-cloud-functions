@@ -94,14 +94,4 @@ const superFastBulk = (eventId, start, numberToReserve) => {
 console.log('Starting....')
 
 // reserveBulkTickets('event2', 1, 649)
-resetBulkTickets('event2', 1, 649)
-
-
-// for (let i = 1; i <= 199; i = i+50 ) {
-//   // sleep(10000)
-//   // superFastBulk('event2', i, 50)
-//   resetBulkTickets('event2', i, 50)
-// }
-
-// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(num => reserveTicket(num))
-// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(num => resetTicket(num))
+reserveBulkTickets('event2', 1, 100)
